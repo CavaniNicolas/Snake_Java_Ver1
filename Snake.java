@@ -63,10 +63,10 @@ public class Snake extends JPanel {
 		for (int i=0; i<3; i++) {
 			if (i == 0) {
 				// La tete est verte et est au milieu de l'ecran
-				body.add(new BodyCell(this.boxSize * nbBoxX / 2, this.boxSize * nbBoxY / 2, Color.green));
+				body.add(new BodyCell(nbBoxX / 2, nbBoxY / 2, Color.green));
 			} else {
 				// Le corps est noir et le serpent regarde vers la gauche
-				body.add(new BodyCell(this.boxSize * nbBoxX / 2 + i * boxSize, this.boxSize * nbBoxY / 2, Color.darkGray));
+				body.add(new BodyCell(nbBoxX / 2 + i, nbBoxY / 2, Color.darkGray));
 			}
 		}
 	}
@@ -75,7 +75,7 @@ public class Snake extends JPanel {
 	public void displaySnake() {
 		for (int i=0; i<body.size(); i++) {
 			g.setColor(body.get(i).getColor());
-			g.fillOval(body.get(i).getX(), body.get(i).getY(), this.boxSize, this.boxSize);
+			g.fillOval(body.get(i).getX() * this.boxSize, body.get(i).getY() * this.boxSize, this.boxSize, this.boxSize);
 		}
 		showScore();
 	}
@@ -123,7 +123,7 @@ public class Snake extends JPanel {
 			}
 
 			if (isPlaced) {
-				apples.add(new Apple(x * boxSize, y * boxSize, Color.red));
+				apples.add(new Apple(x, y, Color.red));
 			}
 		}
 	}
@@ -132,7 +132,7 @@ public class Snake extends JPanel {
 	public void displayApple() {
 		for (int i=0; i<apples.size(); i++) {
 			g.setColor(apples.get(i).getColor());
-			g.fillRect(apples.get(i).getX(), apples.get(i).getY(), this.boxSize, this.boxSize);
+			g.fillRect(apples.get(i).getX() * this.boxSize, apples.get(i).getY() * this.boxSize, this.boxSize, this.boxSize);
 		}
 	}
 
@@ -156,16 +156,16 @@ public class Snake extends JPanel {
 		a = body.get(0);
 
 		if (this.dir == Dir.Up) {
-			a.setY(a.getY()-boxSize);
+			a.setY(a.getY()-1);
 		}
 		if (this.dir == Dir.Down) {
-			a.setY(a.getY()+boxSize);
+			a.setY(a.getY()+1);
 		}
 		if (this.dir == Dir.Left) {
-			a.setX(a.getX()-boxSize);
+			a.setX(a.getX()-1);
 		}
 		if (this.dir == Dir.Right) {
-			a.setX(a.getX()+boxSize);
+			a.setX(a.getX()+1);
 		}
 	}
 
@@ -193,8 +193,8 @@ public class Snake extends JPanel {
 		}
 
 		// Si le serpent rentre dans un mur
-		if ((head.getX() < 0 || head.getX() > MyWindow.WindowWidth - MyWindow.boxSize) || 
-		(head.getY() < 0 || head.getY() > MyWindow.WindowHeight - MyWindow.boxSize)) {
+		if ((head.getX() < 0 || head.getX() > MyWindow.nbBoxWidth) || 
+		(head.getY() < 0 || head.getY() > MyWindow.nbBoxHeight)) {
 			this.play = false;
 			displayGameOver();
 		}
