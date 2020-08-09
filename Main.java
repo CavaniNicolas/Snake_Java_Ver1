@@ -1,7 +1,7 @@
 
 public class Main {
 	public static void main(String[] args) {
-		MyWindow window = new MyWindow(12, 12, 60);
+		MyWindow window = new MyWindow(24, 24, 30);
 		window.startGame();
 	}
 }

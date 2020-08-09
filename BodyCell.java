@@ -37,6 +37,10 @@ public class BodyCell {
 		this.y = y;
 	}
 
+	public void setDir(Dir dir) {
+		this.dir = dir;
+	}
+
 	public void setColor(Color color) {
 		this.color = color;
 	}
@@ -47,6 +51,10 @@ public class BodyCell {
 
 	public int getY() {
 		return this.y;
+	}
+
+	public Dir getDir() {
+		return this.dir;
 	}
 
 	public Color getColor() {

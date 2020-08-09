@@ -4,6 +4,8 @@ import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 
 import java.util.ArrayList;
 
@@ -98,10 +100,17 @@ public class Snake extends JPanel {
 	/**Affiche le serpent*/
 	public void displaySnake() {
 
+		//Graphics2D g2d;
+
 		for (int i=0; i<body.size(); i++) {
 			
 			if (body.get(i).getImage() != null) {
+				//g2d = (Graphics2D)g;
+				//AffineTransform old = g2d.getTransform();
+				//g2d.rotate(Math.toRadians(90));
 				g.drawImage(body.get(i).getImage(), body.get(i).getX() * this.boxSize, body.get(i).getY() * this.boxSize, this.boxSize, this.boxSize, this);
+				//g2d.setTransform(old);
+
 			} else {
 				g.setColor(body.get(i).getColor());
 				g.fillOval(body.get(i).getX() * this.boxSize, body.get(i).getY() * this.boxSize, this.boxSize, this.boxSize);
@@ -192,6 +201,7 @@ public class Snake extends JPanel {
 
 		int prX;
 		int prY;
+		Dir prDir;
 
 		BodyCell a;
 
@@ -199,24 +209,30 @@ public class Snake extends JPanel {
 			a = body.get(i-1);
 			prX = a.getX();
 			prY = a.getY();
+			prDir = a.getDir();
 
 			body.get(i).setX(prX);
 			body.get(i).setY(prY);
+			body.get(i).setDir(prDir);
 		}
 
 		a = body.get(0);
 
 		if (this.dir == Dir.Up) {
 			a.setY(a.getY()-1);
+			a.setDir(Dir.Up);
 		}
 		if (this.dir == Dir.Down) {
 			a.setY(a.getY()+1);
+			a.setDir(Dir.Down);
 		}
 		if (this.dir == Dir.Left) {
 			a.setX(a.getX()-1);
+			a.setDir(Dir.Left);
 		}
 		if (this.dir == Dir.Right) {
 			a.setX(a.getX()+1);
+			a.setDir(Dir.Right);
 		}
 	}
 
