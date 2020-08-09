@@ -7,6 +7,10 @@ import java.awt.Graphics;
 
 import java.util.ArrayList;
 
+import java.awt.Image;
+import java.io.File;
+import javax.imageio.ImageIO;
+
 public class Snake extends JPanel {
 	
 	private Graphics g;
@@ -16,6 +20,7 @@ public class Snake extends JPanel {
 
 	private boolean play = true; // en train de jouer
 	private Dir dir = Dir.Left; // direction du serpent, initialement vert la gauche
+	private boolean allowInput = true; // booleen autorise l'input de touche clavier
 
 	private int scoreApple = 0; // nombre de pommes mangees
 
@@ -34,12 +39,13 @@ public class Snake extends JPanel {
 			g.setColor(Color.GRAY);
 			g.fillRect(0, 0, MyWindow.WindowWidth, MyWindow.WindowHeight);
 			
-			createApple();
+			createApples();
 			displayApple();
 			displaySnake();
-			sleep(250);
+			sleep(150);
 			move();
 			checkCollision();
+			setAllowInput(true);
 		}
 	}
 
@@ -63,19 +69,44 @@ public class Snake extends JPanel {
 		for (int i=0; i<3; i++) {
 			if (i == 0) {
 				// La tete est verte et est au milieu de l'ecran
-				body.add(new BodyCell(nbBoxX / 2, nbBoxY / 2, Color.green));
+				createSnakeCell(nbBoxX / 2, nbBoxY / 2, "assets/snakeHead.png", Dir.Left);
+				//createSnakeCell(nbBoxX / 2, nbBoxY / 2, Color.green);
+
 			} else {
 				// Le corps est noir et le serpent regarde vers la gauche
-				body.add(new BodyCell(nbBoxX / 2 + i, nbBoxY / 2, Color.darkGray));
+				createSnakeCell(nbBoxX/2, nbBoxY/2, "assets/snakeStraightBody.png", Dir.Left);
+				// createSnakeCell(nbBoxX / 2 + i, nbBoxY / 2, Color.darkGray));
 			}
+
+		}
+	}
+
+	/**Creer une nouvelle cellule pour le corps du serpent avec une couleur unie*/
+	public void createSnakeCell(int x, int y, Color color) {
+		body.add(new BodyCell(x, y, color));
+	}
+
+	/**Creer une nouvelle cellule pour le corps du serpent avec une image*/
+	public void createSnakeCell(int x, int y, String imagePath, Dir dir) {
+		try {
+			body.add(new BodyCell(x, y, ImageIO.read(new File(imagePath)), dir ));
+		} catch (Exception e) {
+			body.add(new BodyCell(x, y, Color.darkGray));
 		}
 	}
 
 	/**Affiche le serpent*/
 	public void displaySnake() {
+
 		for (int i=0; i<body.size(); i++) {
-			g.setColor(body.get(i).getColor());
-			g.fillOval(body.get(i).getX() * this.boxSize, body.get(i).getY() * this.boxSize, this.boxSize, this.boxSize);
+			
+			if (body.get(i).getImage() != null) {
+				g.drawImage(body.get(i).getImage(), body.get(i).getX() * this.boxSize, body.get(i).getY() * this.boxSize, this.boxSize, this.boxSize, this);
+			} else {
+				g.setColor(body.get(i).getColor());
+				g.fillOval(body.get(i).getX() * this.boxSize, body.get(i).getY() * this.boxSize, this.boxSize, this.boxSize);
+			}
+
 		}
 		showScore();
 	}
@@ -88,7 +119,7 @@ public class Snake extends JPanel {
 	}
 
 	/**Creer des pommes avec des coordonnees aleatoires */
-	public void createApple() {
+	public void createApples() {
 
 		int i = 0;
 
@@ -123,16 +154,36 @@ public class Snake extends JPanel {
 			}
 
 			if (isPlaced) {
-				apples.add(new Apple(x, y, Color.red));
+				addApple(x, y, "assets/apple.png");
+				//addApple(x, y, Color.red);
 			}
+		}
+	}
+
+	/**Creer une pomme d'une couleur unie */
+	public void addApple(int x, int y, Color color) {
+		apples.add(new Apple(x, y, color));
+	}
+
+	/**Creer une pomme a partir dune image */
+	public void addApple(int x, int y, String imagePath) {
+		try {
+			apples.add(new Apple(x, y, ImageIO.read(new File(imagePath)) ));
+		} catch (Exception e) {
+			apples.add(new Apple(x, y, Color.red));
 		}
 	}
 
 	/**Affiche les pommes */
 	public void displayApple() {
 		for (int i=0; i<apples.size(); i++) {
-			g.setColor(apples.get(i).getColor());
-			g.fillRect(apples.get(i).getX() * this.boxSize, apples.get(i).getY() * this.boxSize, this.boxSize, this.boxSize);
+			
+			if (apples.get(i).getImage() != null) {
+				g.drawImage(apples.get(i).getImage(), apples.get(i).getX() * this.boxSize, apples.get(i).getY() * this.boxSize, this.boxSize, this.boxSize, this);
+			} else {
+				g.setColor(apples.get(i).getColor());
+				g.fillRect(apples.get(i).getX() * this.boxSize, apples.get(i).getY() * this.boxSize, this.boxSize, this.boxSize);
+			}
 		}
 	}
 
@@ -180,7 +231,8 @@ public class Snake extends JPanel {
 			if (head.getX() == apples.get(i).getX() && head.getY() == apples.get(i).getY()) {
 				apples.remove(i);
 				this.scoreApple += 1;
-				body.add(new BodyCell(tail.getX(), tail.getY(), Color.darkGray));
+				createSnakeCell(tail.getX(), tail.getY(), "assets/snakeStraightBody.png", this.dir);
+				//createSnakeCell(tail.getX(), tail.getY(), Color.darkGray);
 			}
 		}
 
@@ -193,8 +245,8 @@ public class Snake extends JPanel {
 		}
 
 		// Si le serpent rentre dans un mur
-		if ((head.getX() < 0 || head.getX() > MyWindow.nbBoxWidth) || 
-		(head.getY() < 0 || head.getY() > MyWindow.nbBoxHeight)) {
+		if ((head.getX() < 0 || head.getX() > MyWindow.nbBoxWidth - 1) || 
+		(head.getY() < 0 || head.getY() > MyWindow.nbBoxHeight - 1)) {
 			this.play = false;
 			displayGameOver();
 		}
@@ -206,6 +258,7 @@ public class Snake extends JPanel {
 		g.setColor(Color.black);
 		g.drawString("Game Over !", MyWindow.WindowWidth / 2 - 200, MyWindow.WindowHeight / 2 - 30);
 	}
+
 	/**Modifie la direction <dir> du serpent */
 	public void setDir(Dir dir) {
 		this.dir = dir;
@@ -214,5 +267,13 @@ public class Snake extends JPanel {
 	/**Renvoie la direction dans laquelle le serpent va */
 	public Dir getDir() {
 		return this.dir;
+	}
+
+	public void setAllowInput(boolean bool) {
+		this.allowInput = bool;
+	}
+
+	public boolean isInputAllowed() {
+		return this.allowInput;
 	}
 }

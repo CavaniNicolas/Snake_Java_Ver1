@@ -1,27 +1,16 @@
 
 import java.awt.Color;
+import java.awt.Image;
 
-public class Apple {
-	
-	private int x;
-	private int y;
-	private Color color;
+public class Apple extends Fruit {
 
+	/**Constructeur : Coordonnees + couleur unie */
 	public Apple(int x, int y, Color color) {
-		this.x = x;
-		this.y = y;
-		this.color = color;
+		super(x, y, color);
 	}
 
-	public int getX() {
-		return this.x;
-	}
-
-	public int getY() {
-		return this.y;
-	}
-
-	public Color getColor() {
-		return this.color;
+	/**Constructeur : Coordonnees + image, avec une couleur par default rouge pour la pomme */
+	public Apple(int x, int y, Image image) {
+		super(x, y, image, Color.red);
 	}
 }

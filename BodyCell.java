@@ -1,5 +1,6 @@
 
 import java.awt.Color;
+import java.awt.Image;
 
 public class BodyCell {
 	
@@ -7,10 +8,25 @@ public class BodyCell {
 	private int y;
 	private Color color;
 
+	private Image image;
+	private Dir dir;
+
+	/**Constructeur : Coordonnees + couleur unie */
 	public BodyCell(int x, int y, Color color) {
 		this.x = x;
 		this.y = y;
 		this.color = color;
+	}
+
+	/**Constructeur : Coordonnees + image, avec une couleur par default darkGray pour le serpent */
+	public BodyCell(int x, int y, Image image) {
+		this(x, y, Color.darkGray);
+		this.image = image;
+	}
+
+	public BodyCell(int x, int y, Image image, Dir dir) {
+		this(x, y, image);
+		this.dir = dir;
 	}
 
 	public void setX(int x) {
@@ -35,5 +51,9 @@ public class BodyCell {
 
 	public Color getColor() {
 		return this.color;
+	}
+
+	public Image getImage() {
+		return this.image;
 	}
 }
