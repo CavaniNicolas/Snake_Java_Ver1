@@ -4,12 +4,9 @@ import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 
 import java.util.ArrayList;
 
-import java.awt.Image;
 import java.io.File;
 import javax.imageio.ImageIO;
 
@@ -100,16 +97,13 @@ public class Snake extends JPanel {
 	/**Affiche le serpent*/
 	public void displaySnake() {
 
-		//Graphics2D g2d;
-
 		for (int i=0; i<body.size(); i++) {
 			
 			if (body.get(i).getImage() != null) {
-				//g2d = (Graphics2D)g;
-				//AffineTransform old = g2d.getTransform();
-				//g2d.rotate(Math.toRadians(90));
+				
+				body.get(i).rotateImage();
+
 				g.drawImage(body.get(i).getImage(), body.get(i).getX() * this.boxSize, body.get(i).getY() * this.boxSize, this.boxSize, this.boxSize, this);
-				//g2d.setTransform(old);
 
 			} else {
 				g.setColor(body.get(i).getColor());

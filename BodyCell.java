@@ -1,6 +1,10 @@
 
 import java.awt.Color;
-import java.awt.Image;
+import java.awt.image.BufferedImage;
+
+import java.awt.Graphics2D;
+
+import javax.imageio.ImageIO;
 
 public class BodyCell {
 	
@@ -8,7 +12,7 @@ public class BodyCell {
 	private int y;
 	private Color color;
 
-	private Image image;
+	private BufferedImage image;
 	private Dir dir;
 
 	/**Constructeur : Coordonnees + couleur unie */
@@ -19,15 +23,21 @@ public class BodyCell {
 	}
 
 	/**Constructeur : Coordonnees + image, avec une couleur par default darkGray pour le serpent */
-	public BodyCell(int x, int y, Image image) {
+	public BodyCell(int x, int y, BufferedImage image, Dir dir) {
 		this(x, y, Color.darkGray);
 		this.image = image;
-	}
-
-	public BodyCell(int x, int y, Image image, Dir dir) {
-		this(x, y, image);
 		this.dir = dir;
 	}
+
+
+	/**Rotate image en fonction de la direction <b>dir */
+	public void rotateImage() {
+		BufferedImage blankCanvas = new BufferedImage(MyWindow.boxSize, MyWindow.boxSize, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2d = (Graphics2D)blankCanvas.getGraphics();
+		g2d.rotate(Math.toRadians(this.dir.getAngle()), this.x*MyWindow.boxSize + MyWindow.boxSize/2, this.y*MyWindow.boxSize + MyWindow.boxSize/2);
+		//this.image = blankCanvas;
+	}
+
 
 	public void setX(int x) {
 		this.x = x;
@@ -43,6 +53,10 @@ public class BodyCell {
 
 	public void setColor(Color color) {
 		this.color = color;
+	}
+
+	public void setImage(BufferedImage image) {
+		this.image = image;
 	}
 
 	public int getX() {
@@ -61,7 +75,7 @@ public class BodyCell {
 		return this.color;
 	}
 
-	public Image getImage() {
+	public BufferedImage getImage() {
 		return this.image;
 	}
 }
