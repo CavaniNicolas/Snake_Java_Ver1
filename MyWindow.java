@@ -37,7 +37,10 @@ public class MyWindow extends JFrame implements KeyListener {
 		this.setSize(WindowWidth, WindowHeight);
 		this.setResizable(false);
 		this.setLocationRelativeTo(null);
+
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//commenter cette ligne permet de rester dans le menu console une fois le jeu finit,
+		//mais quitter le jeu dans le menu avec la page Quit ne tuera pas le processus
 
 		container.setBackground(Color.GRAY);
 

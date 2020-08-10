@@ -33,7 +33,7 @@ public class Snake extends JPanel {
 
 	/**Lance le jeu */
 	public void playGame() {
-		
+
 		while (play) {
 			g.setColor(Color.GRAY);
 			g.fillRect(0, 0, MyWindow.WindowWidth, MyWindow.WindowHeight);
