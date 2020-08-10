@@ -67,6 +67,7 @@ public class Menu {
 		if (this.currentPage.getName() == "Play") {
 			MyWindow window = new MyWindow(24, 24, 30);
 			window.startGame();
+			this.doWeQuit = true;
 		}
 		if (this.currentPage.getName() == "Quit") {
 			this.doWeQuit = true;
