@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import java.io.File;
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 
 public class Snake extends JPanel {
 	
@@ -26,6 +27,13 @@ public class Snake extends JPanel {
 	ArrayList<BodyCell> body = new ArrayList<BodyCell>(); // Liste contenant toutes les cellules du serpent
 	ArrayList<Apple> apples = new ArrayList<Apple>(); // Liste contenant toutes les pommes a l'ecran
 
+	private BufferedImage displayBuffer;
+
+	public Snake() {
+		initSnake();
+		this.displayBuffer = new BufferedImage(MyWindow.WindowWidth, MyWindow.WindowHeight, BufferedImage.TYPE_INT_RGB);
+	}
+
 	public Snake(Graphics g) {
 		this.g = g;
 		initSnake();
@@ -39,8 +47,11 @@ public class Snake extends JPanel {
 			g.fillRect(0, 0, MyWindow.WindowWidth, MyWindow.WindowHeight);
 			
 			createApples();
+
 			displayApple();
 			displaySnake();
+			// repaint();
+
 			sleep(150);
 			move();
 			checkCollision();
@@ -48,14 +59,125 @@ public class Snake extends JPanel {
 		}
 	}
 
-	/**Delay */
-	public void sleep(int time) {
-		try {
-			Thread.sleep(time);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
+
+
+	/*-----------------------------------*/
+	/* Affichage des elements */
+	/*-----------------------------------*/
+
+
+	public void paint(Graphics g) {
+		prepaint(this.displayBuffer.getGraphics());
+		g.drawImage(this.displayBuffer, 0, 0, null);
+	}
+
+	public void prepaint(Graphics g) {
+		displaySnake(g);
+		displayApple(g);
+	}
+
+	/**Affiche le serpent*/
+	public void displaySnake(Graphics g) {
+
+		for (int i=0; i<body.size(); i++) {
+			
+			if (body.get(i).getImage() != null) {
+				
+				body.get(i).rotateImage();
+
+				g.drawImage(body.get(i).getImage(), body.get(i).getX() * this.boxSize, body.get(i).getY() * this.boxSize, this.boxSize, this.boxSize, this);
+
+			} else {
+				g.setColor(body.get(i).getColor());
+				g.fillOval(body.get(i).getX() * this.boxSize, body.get(i).getY() * this.boxSize, this.boxSize, this.boxSize);
+			}
+
+		}
+		showScore(g);
+	}
+
+
+	/**Affiche le serpent*/
+	public void displaySnake() {
+
+		for (int i=0; i<body.size(); i++) {
+			
+			if (body.get(i).getImage() != null) {
+				
+				body.get(i).rotateImage();
+
+				g.drawImage(body.get(i).getImage(), body.get(i).getX() * this.boxSize, body.get(i).getY() * this.boxSize, this.boxSize, this.boxSize, this);
+
+			} else {
+				g.setColor(body.get(i).getColor());
+				g.fillOval(body.get(i).getX() * this.boxSize, body.get(i).getY() * this.boxSize, this.boxSize, this.boxSize);
+			}
+
+		}
+		showScore();
+	}
+
+
+
+	/**Affiche le nombre de pommes mangees */
+	public void showScore(Graphics g) {
+		g.setFont(new Font("Tahoma", Font.BOLD, 24));
+		g.setColor(Color.black);
+		g.drawString(Integer.toString(scoreApple), 30, MyWindow.WindowHeight - 30);
+	}
+
+	/**Affiche le nombre de pommes mangees */
+	public void showScore() {
+		g.setFont(new Font("Tahoma", Font.BOLD, 24));
+		g.setColor(Color.black);
+		g.drawString(Integer.toString(scoreApple), 30, MyWindow.WindowHeight - 30);
+	}
+
+
+
+	/**Affiche les pommes */
+	public void displayApple(Graphics g) {
+		for (int i=0; i<apples.size(); i++) {
+			
+			if (apples.get(i).getImage() != null) {
+				g.drawImage(apples.get(i).getImage(), apples.get(i).getX() * this.boxSize, apples.get(i).getY() * this.boxSize, this.boxSize, this.boxSize, this);
+			} else {
+				g.setColor(apples.get(i).getColor());
+				g.fillRect(apples.get(i).getX() * this.boxSize, apples.get(i).getY() * this.boxSize, this.boxSize, this.boxSize);
+			}
 		}
 	}
+
+
+	/**Affiche les pommes */
+	public void displayApple() {
+		for (int i=0; i<apples.size(); i++) {
+			
+			if (apples.get(i).getImage() != null) {
+				g.drawImage(apples.get(i).getImage(), apples.get(i).getX() * this.boxSize, apples.get(i).getY() * this.boxSize, this.boxSize, this.boxSize, this);
+			} else {
+				g.setColor(apples.get(i).getColor());
+				g.fillRect(apples.get(i).getX() * this.boxSize, apples.get(i).getY() * this.boxSize, this.boxSize, this.boxSize);
+			}
+		}
+	}
+
+
+	/**Display Game Over Text */
+	public void displayGameOver() {
+		g.setFont(new Font("Tahoma", Font.BOLD, 72));
+		g.setColor(Color.black);
+		g.drawString("Game Over !", MyWindow.WindowWidth / 2 - 200, MyWindow.WindowHeight / 2 - 30);
+	}
+
+
+
+
+
+	/*-----------------------------------*/
+	/* Creation des elements */
+	/*-----------------------------------*/
+
 
 	/**Initialisation dun serpent de taille 3*/
 	public void initSnake() {
@@ -92,33 +214,6 @@ public class Snake extends JPanel {
 		} catch (Exception e) {
 			body.add(new BodyCell(x, y, Color.darkGray));
 		}
-	}
-
-	/**Affiche le serpent*/
-	public void displaySnake() {
-
-		for (int i=0; i<body.size(); i++) {
-			
-			if (body.get(i).getImage() != null) {
-				
-				body.get(i).rotateImage();
-
-				g.drawImage(body.get(i).getImage(), body.get(i).getX() * this.boxSize, body.get(i).getY() * this.boxSize, this.boxSize, this.boxSize, this);
-
-			} else {
-				g.setColor(body.get(i).getColor());
-				g.fillOval(body.get(i).getX() * this.boxSize, body.get(i).getY() * this.boxSize, this.boxSize, this.boxSize);
-			}
-
-		}
-		showScore();
-	}
-
-	/**Affiche le nombre de pommes mangees */
-	public void showScore() {
-		g.setFont(new Font("Tahoma", Font.BOLD, 24));
-		g.setColor(Color.black);
-		g.drawString(Integer.toString(scoreApple), 30, MyWindow.WindowHeight - 30);
 	}
 
 	/**Creer des pommes avec des coordonnees aleatoires */
@@ -177,18 +272,14 @@ public class Snake extends JPanel {
 		}
 	}
 
-	/**Affiche les pommes */
-	public void displayApple() {
-		for (int i=0; i<apples.size(); i++) {
-			
-			if (apples.get(i).getImage() != null) {
-				g.drawImage(apples.get(i).getImage(), apples.get(i).getX() * this.boxSize, apples.get(i).getY() * this.boxSize, this.boxSize, this.boxSize, this);
-			} else {
-				g.setColor(apples.get(i).getColor());
-				g.fillRect(apples.get(i).getX() * this.boxSize, apples.get(i).getY() * this.boxSize, this.boxSize, this.boxSize);
-			}
-		}
-	}
+
+
+
+
+
+	/*-----------------------------------*/
+	/* Deplacement du snake */
+	/*-----------------------------------*/
 
 	/**Deplace le serpent en fonction de sa direction <b>dir */
 	public void move() {
@@ -262,11 +353,19 @@ public class Snake extends JPanel {
 		}
 	}
 
-	/**Display Game Over Text */
-	public void displayGameOver() {
-		g.setFont(new Font("Tahoma", Font.BOLD, 72));
-		g.setColor(Color.black);
-		g.drawString("Game Over !", MyWindow.WindowWidth / 2 - 200, MyWindow.WindowHeight / 2 - 30);
+
+
+	/*-----------------------------------*/
+	/* Divers */
+	/*-----------------------------------*/
+
+	/**Delay */
+	public void sleep(int time) {
+		try {
+			Thread.sleep(time);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
 	}
 
 	/**Modifie la direction <dir> du serpent */

@@ -50,6 +50,7 @@ public class MyWindow extends JFrame implements KeyListener {
 		this.setVisible(true);
 
 		snake = new Snake(this.getGraphics());
+		// snake = new Snake();
 	}
 
 	public void startGame() {
